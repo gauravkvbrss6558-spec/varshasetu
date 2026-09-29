@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>VarshaSetu – Block-level monsoon outlook (prototype)</title>
+<style>
+:root{--bg:#F3F7F4;--surface:#FFFFFF;--ink:#14302B;--muted:#5A6F6A;--line:#D3E0DA;--brand:#0E5A4E;--g:#3E9B5F;--a:#E3A21A;--r:#C8452F;--sel:#14302B;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0F1D1A;--surface:#172A26;--ink:#E6F1EC;--muted:#98B0A8;--line:#2A423C;--brand:#5CC3AE;--g:#4CB574;--a:#EDB53A;--r:#E0644E;--sel:#E6F1EC}}
+:root[data-theme="dark"]{--bg:#0F1D1A;--surface:#172A26;--ink:#E6F1EC;--muted:#98B0A8;--line:#2A423C;--brand:#5CC3AE;--g:#4CB574;--a:#EDB53A;--r:#E0644E;--sel:#E6F1EC}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Segoe UI","Noto Sans","Noto Sans Devanagari",Arial,sans-serif}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+.wrap{max-width:1040px;margin:0 auto;padding:20px 16px 40px}
+h1{font:700 26px/1.2 Georgia,"Times New Roman",serif;margin:0 0 4px}
+.sub{color:var(--muted);margin:0 0 16px;max-width:60ch}
+.bar{display:flex;flex-wrap:wrap;gap:14px 24px;margin-bottom:14px;align-items:flex-end}
+.grp label{display:block;font-size:12px;color:var(--muted);margin-bottom:4px}
+.seg{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--surface)}
+.seg button{border:0;background:none;color:var(--ink);padding:8px 12px;font:inherit;font-size:14px;cursor:pointer;border-right:1px solid var(--line)}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--brand);color:#fff}
+.seg button:focus-visible,.tile:focus-visible,select:focus-visible,.copy:focus-visible{outline:3px solid var(--a);outline-offset:2px}
+select{padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font:inherit;font-size:14px}
+.main{display:grid;grid-template-columns:1.15fr 1fr;gap:18px}
+@media(max-width:820px){.main{grid-template-columns:1fr}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px}
+.mapwrap h2,.detail h2{font-size:16px;margin:0 0 2px}
+.note{font-size:12.5px;color:var(--muted);margin:0 0 12px}
+.map{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.tile{border:2px solid transparent;border-radius:10px;padding:10px 6px;min-height:78px;color:#fff;cursor:pointer;text-align:center;font:inherit;display:flex;flex-direction:column;justify-content:center;gap:2px}
+.tile b{font-size:13px}.tile span{font-size:20px;font-weight:700}
+.tile.g{background:var(--g)}.tile.a{background:var(--a);color:#241a00}.tile.r{background:var(--r)}
+.tile[aria-pressed="true"]{border-color:var(--sel);box-shadow:0 0 0 2px var(--surface) inset}
+.legend{display:flex;gap:14px;margin-top:12px;font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.row{margin:10px 0}
+.row .top{display:flex;justify-content:space-between;font-size:13.5px;margin-bottom:3px}
+.track{height:10px;background:var(--line);border-radius:6px;overflow:hidden}
+.fill{height:100%;border-radius:6px}
+.conf{display:inline-block;font-size:12px;border:1px solid var(--line);border-radius:999px;padding:2px 10px;color:var(--muted);margin-left:6px}
+.adv{margin:14px 0 0;padding:12px 14px;border-radius:10px;background:var(--bg);border:1px solid var(--line)}
+.adv h3{margin:0 0 4px;font-size:14px}
+.adv p{margin:0 0 6px;font-size:14.5px}
+.sms{margin-top:12px;background:#1F3A34;color:#EAF6F1;border-radius:14px 14px 14px 4px;padding:10px 12px;font-size:13.5px;max-width:340px}
+.sms small{display:block;color:#9FC2B8;margin-top:4px;font-size:11.5px}
+.copy{margin-top:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:6px 12px;font:inherit;font-size:13px;cursor:pointer}
+.inputs{margin-bottom:18px}.inputs h2{font-size:16px;margin:0 0 2px}
+.ig{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px 20px;margin-top:10px}
+.ig label{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-bottom:4px}
+.ig label b{color:var(--ink)}.ig input[type=range]{width:100%;accent-color:var(--brand)}
+.best{margin:0 0 8px;font-size:14px;font-weight:600;color:var(--brand)}
+.srcbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:0 0 10px;font-size:13px}.srcbar .dot{width:9px;height:9px;border-radius:50%;background:var(--a)}.srcbar.on .dot{background:var(--g)}
+.foot{margin-top:16px;font-size:12.5px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>VarshaSetu</h1>
+  <p class="sub">1–4 week monsoon outlook for every block, turned into a sowing advisory a farmer can read in Hindi or English.</p>
+
+  <div class="bar">
+    <div class="grp"><label>Outlook week</label>
+      <div class="seg" id="weeks"></div></div>
+    <div class="grp"><label>Map shows</label>
+      <div class="seg" id="layers"></div></div>
+    <div class="grp"><label for="crop">Crop</label>
+      <select id="crop"></select></div>
+  </div>
+
+  <section class="panel inputs" aria-label="Climate inputs">
+    <h2>Climate inputs</h2>
+    <p class="note">Change these and every block's outlook is recomputed from 400 simulated seasons.</p>
+    <div class="srcbar" id="srcbar"><i class="dot"></i><span id="srcTxt"></span><button class="copy" id="liveBtn" style="margin:0">Reload live data</button></div>
+    <div class="grp"><label for="scn">Scenario</label><select id="scn"><option value="normal">Normal year</option><option value="elnino">El Niño year, late monsoon</option><option value="burst">Active MJO burst</option><option value="custom">Custom</option></select></div>
+    <div class="ig" id="ig"></div>
+  </section>
+  <div class="main">
+    <section class="panel mapwrap" aria-label="Block risk map">
+      <h2 id="mapTitle"></h2>
+      <p class="note">12 blocks of a sample district. Tap a block for its advisory.</p>
+      <div class="map" id="map"></div>
+      <div class="legend"><span><i style="background:var(--g)"></i>Low risk (under 40%)</span><span><i style="background:var(--a)"></i>Watch (40–60%)</span><span><i style="background:var(--r)"></i>High (over 60%)</span></div>
+    </section>
+
+    <section class="panel detail" aria-live="polite">
+      <h2 id="bName"></h2>
+      <p class="note" id="bMeta"></p>
+      <div id="bars"></div>
+      <div class="adv"><h3>Advisory</h3><p id="advEn"></p><p id="advHi" lang="hi"></p></div>
+      <div class="sms" id="sms"></div>
+      <button class="copy" id="copy">Copy SMS text</button>
+    </section>
+  </div>
+  <p class="foot">Weather data by Open-Meteo.com (CC BY 4.0), free for non-commercial use. Block points are approximate centres and the data grid is about 10 km, so neighbouring blocks can look alike. How it works: each block runs 400 simulated 6-week rainfall seasons (wet/dry-day Markov chain). ENSO, IOD, MJO and recent rain shift the odds. Onset = 30 mm in 3 days; dry spell = 5+ dry days in a week; false onset = 7+ dry days within 14 days of onset; heavy = a day of 40 mm or more. Block climatology and index effects are illustrative, not yet calibrated on IMD data.</p>
+</div>
+
+<script>
+const blocks=["Danapur","Phulwari","Paliganj","Bikram","Maner","Bihta","Naubatpur","Dulhin Bazar","Masaurhi","Punpun","Barh","Mokama"];
+let P01=[.30,.28,.24,.26,.29,.25,.27,.23,.26,.31,.33,.32],P11=blocks.map((_,i)=>.62+.02*(i%4)),MM=blocks.map((_,i)=>11+i%5),LIVE=false,fc7=[];
+const LL=[[25.62,85.04],[25.57,85.09],[25.35,84.80],[25.43,84.96],[25.65,84.87],[25.57,84.87],[25.38,84.98],[25.35,84.93],[25.35,85.03],[25.42,85.02],[25.48,85.71],[25.40,85.92]];
+const N=400,DAYS=42;
+function rng(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const cl=(v,a,b)=>Math.max(a,Math.min(b,v));
+function sim(i,p){
+  const R=rng(9000+i*131),W=[1,2,3,4].map(()=>({dry:0,heavy:0,on:0,cum:0,fo:0,mm:0}));
+  for(let n=0;n<N;n++){
+    const r=new Array(DAYS);let wet=R()<p.recent/150;
+    for(let d=0;d<DAYS;d++){
+      const f=1-.07*p.enso+.06*p.iod+p.amp*.10*Math.cos((p.phase-3)*Math.PI/4)*Math.exp(-d/14)+(p.recent-40)/400*Math.exp(-d/10);
+      const p01=cl(P01[i]*f,.05,.85),p11=cl(P11[i]*(1+(f-1)*.5),.3,.9);
+      wet=R()<(wet?p11:p01);
+      const m=MM[i]*f;r[d]=wet?m/2*(-Math.log(1-R())-Math.log(1-R())):0;
+    }
+    let on=-1;for(let d=2;d<28;d++)if(r[d]+r[d-1]+r[d-2]>=30){on=d;break}
+    let fals=false;
+    if(on>=0&&on+14<DAYS){let run=0;for(let d=on+1;d<=on+14;d++){run=r[d]<2.5?run+1:0;if(run>=7){fals=true;break}}}
+    for(let w=0;w<4;w++){
+      let run=0,best=0,hv=false,sum=0;
+      for(let d=w*7;d<w*7+7;d++){run=r[d]<2.5?run+1:0;best=Math.max(best,run);if(r[d]>=40)hv=true;sum+=r[d]}
+      if(best>=5)W[w].dry++;if(hv)W[w].heavy++;W[w].mm+=sum;
+      if(on>=w*7&&on<w*7+7)W[w].on++;
+      if(on>=0&&on<w*7+7){W[w].cum++;if(fals)W[w].fo++}
+    }
+  }
+  return W.map(x=>({dry:Math.round(100*x.dry/N),heavy:Math.round(100*x.heavy/N),onset:Math.round(100*x.cum/N),wk:Math.round(100*x.on/N),fo:x.cum>10?Math.round(100*x.fo/x.cum):0,mm:Math.round(x.mm/N)}));
+}
+const layers=[{k:"dry",label:"Dry spell",title:"Dry-spell (break) risk"},{k:"heavy",label:"Heavy rain",title:"Heavy-rain risk"},{k:"fo",label:"False onset",title:"False-onset risk"}];
+const crops={rice:{en:"Rice",hi:"धान"},maize:{en:"Maize",hi:"मक्का"},arhar:{en:"Arhar (pigeon pea)",hi:"अरहर"}};
+const conf=["High","High","Medium","Low"];
+const scn={normal:{enso:0,iod:0,phase:3,amp:.5,recent:40},elnino:{enso:1.5,iod:-.5,phase:6,amp:1,recent:15},burst:{enso:-.5,iod:1,phase:3,amp:1.8,recent:80}};
+const sl=[["enso","ENSO (El Niño +)",-2,2,.5,""],["iod","IOD (positive +)",-2,2,.5,""],["phase","MJO phase",1,8,1,""],["amp","MJO strength",0,2,.1,""],["recent","Rain last 7 days",0,150,5," mm"]];
+let week=1,layer="dry",crop="rice",sel=0,par={...scn.normal},data=[];
+const $=id=>document.getElementById(id);
+function seg(el,items,get,set){el.innerHTML="";items.forEach(it=>{const b=document.createElement("button");b.textContent=it.t;b.setAttribute("aria-pressed",get()===it.v);b.onclick=()=>{set(it.v);render()};el.appendChild(b)})}
+const cls=p=>p>60?"r":p>=40?"a":"g",colr=p=>`var(--${cls(p)})`;
+function advice(d,c){const C=crops[c];
+  if(d.dry>60)return{en:`Delay sowing of ${C.en} by 7–10 days. A dry spell is likely. Line up irrigation or pick a shorter-duration variety.`,hi:`${C.hi} की बुवाई 7–10 दिन टालें। सूखा दौर आने की संभावना है। सिंचाई की व्यवस्था रखें या कम अवधि की किस्म चुनें।`,sms:`Dry spell likely. Delay ${C.en} sowing 7-10 days. Arrange irrigation.`};
+  if(d.fo>60)return{en:`Wait before sowing ${C.en}. The first rain may be a false onset. Sow after a second good spell of rain.`,hi:`${C.hi} की बुवाई अभी न करें। पहली बारिश झूठी शुरुआत हो सकती है। दूसरी अच्छी बारिश के बाद बोएं।`,sms:`False onset risk. Do not sow ${C.en} yet. Wait for a second rain.`};
+  if(d.heavy>60)return{en:`Heavy rain likely. Clear field drains for ${C.en} and hold back fertilizer and spraying until it passes.`,hi:`भारी बारिश की संभावना है। ${C.hi} के खेत की नाली साफ रखें और खाद व छिड़काव बारिश के बाद करें।`,sms:`Heavy rain likely. Clear ${C.en} field drains. Delay fertilizer and spray.`};
+  if(d.onset<40)return{en:`Monsoon has not set in yet for this outlook. Keep ${C.en} seed ready and wait for the next update.`,hi:`इस अनुमान में मानसून अभी शुरू नहीं हुआ है। ${C.hi} का बीज तैयार रखें और अगली सूचना का इंतज़ार करें।`,sms:`Onset not yet likely. Keep ${C.en} seed ready. Wait for update.`};
+  return{en:`Conditions look favourable. You can go ahead with ${C.en} sowing. Keep watching for updates.`,hi:`स्थिति अनुकूल है। ${C.hi} की बुवाई कर सकते हैं। अगली सूचना पर नज़र रखें।`,sms:`Good sowing window for ${C.en}. Proceed as planned.`};}
+function inputs(){$("ig").innerHTML=sl.map(s=>`<div><label for="s_${s[0]}">${s[1]}<b id="v_${s[0]}">${par[s[0]]}${s[5]}</b></label><input type="range" id="s_${s[0]}" min="${s[2]}" max="${s[3]}" step="${s[4]}" value="${par[s[0]]}"></div>`).join("");
+  sl.forEach(s=>$("s_"+s[0]).oninput=e=>{par[s[0]]=+e.target.value;$("scn").value="custom";render()})}
+function render(){
+  data=blocks.map((_,i)=>sim(i,par));
+  sl.forEach(s=>{$("s_"+s[0]).value=par[s[0]];$("v_"+s[0]).textContent=par[s[0]]+s[5]});
+  seg($("weeks"),[1,2,3,4].map(v=>({v,t:"Week "+v})),()=>week,v=>week=v);
+  seg($("layers"),layers.map(l=>({v:l.k,t:l.label})),()=>layer,v=>layer=v);
+  $("mapTitle").textContent=layers.find(l=>l.k===layer).title+" – week "+week;
+  const m=$("map");m.innerHTML="";
+  blocks.forEach((n,i)=>{const p=data[i][week-1][layer],t=document.createElement("button");t.className="tile "+cls(p);t.setAttribute("aria-pressed",i===sel);t.setAttribute("aria-label",`${n}: ${p} percent`);t.innerHTML=`<b>${n}</b><span>${p}%</span>`;t.onclick=()=>{sel=i;render()};m.appendChild(t)});
+  const W=data[sel],d=W[week-1];
+  let bw=-1,bs=1e9;W.forEach((x,k)=>{if(x.onset>=40){const sc=x.dry*.5+x.fo*.3+x.heavy*.2;if(sc<bs){bs=sc;bw=k}}});
+  $("bName").textContent=blocks[sel]+" block";
+  $("bMeta").innerHTML=`<span class="best">${bw<0?"No safe sowing window in the next 4 weeks":"Best sowing window: week "+(bw+1)}</span><br>Week ${week} outlook <span class="conf">${conf[week-1]} confidence</span> · expected rain ${d.mm} mm${LIVE?` · weather-model forecast, next 7 days: ${fc7[sel]} mm`:""}`;
+  const rows=[["Monsoon onset by this week",d.onset,"var(--g)"],["Dry spell",d.dry,colr(d.dry)],["Heavy rain day",d.heavy,colr(d.heavy)],["False onset",d.fo,colr(d.fo)]];
+  $("bars").innerHTML=rows.map(r=>`<div class="row"><div class="top"><span>${r[0]}</span><b>${r[1]}%</b></div><div class="track"><div class="fill" style="width:${r[1]}%;background:${r[2]}"></div></div></div>`).join("");
+  const a=advice(d,crop);$("advEn").textContent=a.en;$("advHi").textContent=a.hi;
+  window._sms=`VarshaSetu | ${blocks[sel]} wk${week}: ${a.sms}`;
+  $("sms").innerHTML=`${window._sms}<small>SMS preview · ${conf[week-1]} confidence</small>`;
+}
+$("crop").innerHTML=Object.entries(crops).map(([k,v])=>`<option value="${k}">${v.en} / ${v.hi}</option>`).join("");
+$("crop").onchange=e=>{crop=e.target.value;render()};
+$("scn").onchange=e=>{if(scn[e.target.value])par={...scn[e.target.value]};render()};
+$("copy").onclick=async e=>{try{await navigator.clipboard.writeText(window._sms);e.target.textContent="Copied"}catch(x){e.target.textContent="Select the text above to copy"}setTimeout(()=>e.target.textContent="Copy SMS text",1800)};
+const setSrc=(t,on)=>{$("srcTxt").textContent=t;$("srcbar").className="srcbar"+(on?" on":"")};
+async function jget(u){const r=await fetch(u);if(!r.ok)throw new Error(r.status);const d=await r.json();return Array.isArray(d)?d:[d]}
+async function live(){
+  setSrc("Loading real rainfall data…");
+  try{
+    const lat=LL.map(x=>x[0]).join(),lon=LL.map(x=>x[1]).join(),key="vs_cal_v1";let cal=null;
+    try{cal=JSON.parse(localStorage.getItem(key)||"null");if(cal&&Date.now()-cal.t>6048e5)cal=null}catch(e){}
+    if(!cal){
+      const res=await Promise.all([2020,2021,2022,2023,2024,2025].map(y=>jget(`https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lon}&start_date=${y}-06-01&end_date=${y}-07-31&daily=precipitation_sum&timezone=Asia%2FKolkata`)));
+      const p01=[],p11=[],mm=[];
+      blocks.forEach((_,i)=>{let a=0,b=0,c=0,d=0,sm=0,n=0;
+        res.forEach(r=>{const v=r[i].daily.precipitation_sum;for(let k=1;k<v.length;k++){const w0=v[k-1]>=2.5,w1=v[k]>=2.5;if(w0){c++;if(w1)d++}else{a++;if(w1)b++}if(w1){sm+=v[k];n++}}});
+        p01.push(a?b/a:.25);p11.push(c?d/c:.6);mm.push(n?sm/n:12)});
+      cal={t:Date.now(),p01,p11,mm};try{localStorage.setItem(key,JSON.stringify(cal))}catch(e){}
+    }
+    P01=cal.p01;P11=cal.p11;MM=cal.mm;
+    const f=await jget(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=precipitation_sum&past_days=7&forecast_days=7&timezone=Asia%2FKolkata`);
+    const sum=a=>Math.round(a.reduce((x,y)=>x+(y||0),0));
+    fc7=f.map(r=>sum(r.daily.precipitation_sum.slice(7,14)));
+    par.recent=cl(Math.round(f.reduce((x,r)=>x+sum(r.daily.precipitation_sum.slice(0,7)),0)/f.length/5)*5,0,150);
+    $("scn").value="custom";LIVE=true;
+    setSrc("Live data: block climate calibrated on real June–July rainfall (2020–2025), recent rain and forecast from Open-Meteo.",true);
+  }catch(e){LIVE=false;setSrc("Live data not available here (it works once the page is hosted on your own site). Showing the simulated climate.")}
+  render();
+}
+$("liveBtn").onclick=live;
+inputs();render();live();
+</script>
+</body>
+</html>
